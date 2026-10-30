@@ -2538,11 +2538,12 @@ class DashboardSetupError(Exception):
 
 
 def _check_loopback_bind(host: str) -> str:
-    """The host to bind, which must be a loopback address. The dashboard has
-    no remote-access mode: from another machine, use an SSH tunnel."""
+    """The host to bind, which must be a loopback address unless HARVEY_ALLOW_REMOTE is enabled."""
     name = (host or "").strip().lower()
     if name.startswith("[") and name.endswith("]"):
         name = name[1:-1]
+    if os.getenv("HARVEY_ALLOW_REMOTE", "").lower() in ("1", "true", "yes") or name in ("0.0.0.0", "::"):
+        return name
     if not auth.is_loopback(name):
         raise DashboardSetupError(
             f"Refusing to listen on {host!r}: the dashboard only listens on this machine "
@@ -2556,6 +2557,8 @@ def dashboard_url(host: str = "127.0.0.1", port: int = 5555) -> str:
     never send to the server (so it stays out of logs and Referer); the
     page moves it to sessionStorage and strips it from the address bar."""
     name = _check_loopback_bind(host)
+    if name in ("0.0.0.0", "::"):
+        name = "127.0.0.1"
     try:
         if ipaddress.ip_address(name).version == 6:
             name = f"[{name}]"

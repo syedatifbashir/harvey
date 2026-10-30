@@ -56,4 +56,4 @@ HEALTHCHECK --interval=1m --timeout=10s --start-period=1m --retries=3 \
 # heartbeat loop itself. Any arguments replace the default command, so
 # `docker compose run --rm harvey setup` runs the setup wizard.
 ENTRYPOINT ["python", "-m", "harvey"]
-CMD ["dashboard"]
+CMD ["dashboard", "--host", "0.0.0.0"]
