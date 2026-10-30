@@ -50,7 +50,7 @@ import threading
 import time
 from pathlib import Path
 
-TOKEN_RE = re.compile(r"[A-Za-z0-9_-]{43,128}")
+TOKEN_RE = re.compile(r"[A-Za-z0-9_-]{8,128}")
 _PORT_RE = re.compile(r":[0-9]{1,5}")
 _IS_WINDOWS = os.name == "nt"
 
